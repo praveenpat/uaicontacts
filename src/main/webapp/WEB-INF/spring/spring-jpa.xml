@@ -14,8 +14,8 @@
 						   http://www.springframework.org/schema/context http://www.springframework.org/schema/task/spring-context-3.0.xsd">
 
     <!-- JPA Configurations -->
-    <jee:jndi-lookup id="myContactDataSource" jndi-name="jdbc/tomcatDataSource" lookup-on-startup="false"
-                     proxy-interface="javax.sql.DataSource"/>
+    <!-- <jee:jndi-lookup id="myContactDataSource" jndi-name="jdbc/tomcatDataSource" lookup-on-startup="false"
+                     proxy-interface="javax.sql.DataSource"/> -->
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
 
@@ -24,7 +24,7 @@
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence"/>
-        <property name="dataSource" ref="myContactDataSource"/>
+        <property name="dataSource" ref="psqldataSource"/>
         <property name="persistenceUnitName" value="uaiContactsPU"/>
         <property name="persistenceXmlLocation" value="classpath:META-INF/persistence.xml" />
 
@@ -34,4 +34,15 @@
     <jpa:repositories base-package="uaiContacts.repository"
                       entity-manager-factory-ref="entityManagerFactory"
                       transaction-manager-ref="transactionManager"/>
+                      
+    <bean id="psqldataSource" destroy-method="close"
+                         class="org.apache.commons.dbcp.BasicDataSource">
+    <property name="driverClassName" value="org.postgresql.Driver"/>
+    <property name="url" value="jdbc:postgresql://uaicontactsdb:5432/uaicontacts"/>
+    <property name="username" value="postgres"/>
+    <property name="password" value="postgres"/>
+    <property name="initialSize" value="3"/>
+</bean>                
+                      
+                      
 </beans>
